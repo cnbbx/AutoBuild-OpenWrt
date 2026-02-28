@@ -1,4 +1,7 @@
 name: Auto OpenWrt Build
+run-name: 我的OpenWrt云编译：${{ inputs.target_profile }}
+env:
+  TZ: Asia/Shanghai
 
 on: 
   workflow_dispatch:
@@ -29,6 +32,7 @@ jobs:
       run: |
         git clone --depth=1 https://github.com/openwrt/openwrt.git -b openwrt-25.12
         cd openwrt
+        chmod +x ../profiles/*.sh
         if [ -n "${{ inputs.target_profile }}" ]; then
           ../profiles/${{ inputs.target_profile }}.sh
         fi
