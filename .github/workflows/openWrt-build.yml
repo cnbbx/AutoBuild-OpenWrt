@@ -6,7 +6,7 @@ on:
       target_profile:
         description: '目标设备配置文件'
         required: false
-        default: ''
+        default: 'd-team_newifi-d2'
         type: string
 
 jobs:
@@ -32,6 +32,9 @@ jobs:
     - name: 配置 OpenWrt（自动选择）
       run: |
         cd openwrt
+        if [ -n "${{ inputs.target_profile }}" ]; then
+          ../profiles/${{ inputs.target_profile }}.sh
+        fi
         # 如果有指定的配置文件
         if [ -n "${{ inputs.target_profile }}" ] && [ -f "../profiles/${{ inputs.target_profile }}" ]; then
           cp "../profiles/${{ inputs.target_profile }}" .config
