@@ -15,12 +15,11 @@ sed -i 's/192.168.1.1/192.168.99.1/g' .config
 sed -i "s/'OpenWrt'/'Cnbbx'/g" package/base-files/files/bin/config_generate
 sed -i "s/GMT0/CST-8/g" package/base-files/files/bin/config_generate
 sed -i "s/UTC/Asia\/Shanghai/g" package/base-files/files/bin/config_generate
-sed -i "s/'OpenWrt'/'Cnbbx'/g" package/network/config/wifi-scripts/files/lib/wifi/mac80211.uc
-
-sed -i "s/'OpenWrt'/'Cnbbx'/g" feeds/luci/modules/luci-mod-network/htdocs/luci-static/resources/view/network/wireless.js
 
 # Cancel power on and disable WIFI
-sed -i '/set \${si}.disabled='\''\${defaults ? 0 : 1}'\''/d' package/network/config/wifi-scripts/files/lib/wifi/mac80211.uc
+sed -i "s/'OpenWrt'/'Cnbbx'/g" package/network/config/wifi-scripts/files/lib/wifi/mac80211.uc
+sed -i "/.disabled=/d" package/network/config/wifi-scripts/files/lib/wifi/mac80211.uc
+sed -i "s/'OpenWrt'/'Cnbbx'/g" feeds/luci/modules/luci-mod-network/htdocs/luci-static/resources/view/network/wireless.js
 
 # Modify default theme
 sed -i 's/bootstrap/argon/g' feeds/luci/modules/luci-base/root/etc/config/luci
