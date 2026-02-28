@@ -79,7 +79,7 @@ jobs:
           echo "硬盘详情："
           df -Th
 
-      - name: 初始化系统环境 (修复版)
+      - name: 彻底修复系统环境
         if: matrix.FIRMWARE_BUILD == true
         env:
           DEBIAN_FRONTEND: noninteractive
@@ -102,63 +102,112 @@ jobs:
           echo "=== 3. 启用 i386 多架构支持 ==="
           sudo dpkg --add-architecture i386
           
-          echo "=== 4. 强制更新 apt 缓存 ==="
-          sudo apt-get -qq update
+          echo "=== 4. 彻底重置 APT 状态 ==="
+          # 清空缓存
+          sudo rm -rf /var/lib/apt/lists/*
           
-          echo "=== 5. 验证关键包是否存在 ==="
-          apt-cache policy build-essential gettext libfuse-dev
+          # 修复损坏的包状态
+          sudo dpkg --configure -a
+          sudo apt-get -f install -y
           
-          echo "=== 6. 安装编译必备工具 ==="
-          sudo apt-get -qq install --no-install-recommends \
+          # 移除所有包锁定
+          if [ -n "$(apt-mark showhold)" ]; then
+            echo "解除被锁定的包:"
+            apt-mark showhold
+            apt-mark unhold $(apt-mark showhold)
+          fi
+          
+          echo "=== 5. 强制更新 apt 缓存 ==="
+          sudo apt-get update -y
+          
+          echo "=== 6. 分步安装核心包 ==="
+          # 第一步：安装最基础的工具
+          sudo apt-get install -y --fix-broken --fix-missing
+          
+          # 第二步：安装编译基础包
+          sudo apt-get install -y \
               build-essential \
-              libfuse-dev \
-              asciidoc \
-              binutils \
-              bzip2 \
-              gawk \
-              gettext \
+              gcc \
+              g++ \
+              make \
+              cmake \
+              pkg-config
+          
+          # 第三步：安装 OpenWrt 必需包
+          sudo apt-get install -y \
               git \
+              wget \
+              curl \
+              rsync \
+              unzip \
+              bzip2 \
+              p7zip-full \
+              python3 \
+              python3-distutils \
+              python3-dev
+          
+          # 第四步：安装库依赖
+          sudo apt-get install -y \
+              libssl-dev \
               libncurses5-dev \
               libz-dev \
-              patch \
-              python3 \
-              unzip \
-              zlib1g-dev \
-              lib32gcc-s1 \
-              libc6-dev-i386 \
-              flex \
-              p7zip-full \
-              libssl-dev \
-              texinfo \
               libelf-dev \
+              libfuse-dev \
+              texinfo \
+              flex \
+              bison \
+              gawk \
+              gettext \
               autoconf \
               automake \
               libtool \
-              wget \
-              curl \
-              swig \
-              rsync
+              swig
+          
+          # 第五步：安装多架构支持
+          sudo apt-get install -y \
+              lib32gcc-s1 \
+              libc6-dev-i386 \
+              libstdc++6:i386
+          
+          # 第六步：安装额外工具
+          sudo apt-get install -y \
+              asciidoc \
+              binutils \
+              patch \
+              zlib1g-dev
           
           echo "=== 7. 安装 dtc (设备树编译器) ==="
-          sudo apt-get -qq install --no-install-recommends dtc
+          sudo apt-get install -y device-tree-compiler
           
           echo "=== 8. 安装 Node.js + uglify-js ==="
+          # 使用 nodesource 官方源
           curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash -
           sudo apt-get install -y nodejs
           sudo npm install -g uglify-js
           
-          echo "=== 9. 清理 ==="
-          sudo apt-get -qq autoremove --purge
-          sudo apt-get -qq clean
+          echo "=== 9. 验证安装 ==="
+          echo "GCC 版本:"
+          gcc --version
+          echo "Git 版本:"
+          git --version
+          echo "Python 版本:"
+          python3 --version
+          echo "Node.js 版本:"
+          node --version
           
-          echo "=== 10. 设置时区 ==="
+          echo "=== 10. 清理 ==="
+          sudo apt-get autoremove -y
+          sudo apt-get clean
+          
+          echo "=== 11. 设置时区 ==="
           sudo timedatectl set-timezone "Asia/Shanghai"
           
-          echo "=== 11. 创建工作目录 ==="
+          echo "=== 12. 创建工作目录 ==="
           sudo mkdir -p /workdir
           sudo chown $USER:$GROUPS /workdir
           
-          echo "=== 完成！ ==="
+          echo "✅ 系统环境准备完成！"
+
       
       - name: 克隆软路由源代码
         if: matrix.FIRMWARE_BUILD == true
