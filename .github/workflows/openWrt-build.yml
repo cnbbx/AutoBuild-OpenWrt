@@ -26,15 +26,15 @@ jobs:
       run: |
         git clone --depth=1 https://github.com/openwrt/openwrt.git -b openwrt-25.12
         cd openwrt
+        if [ -n "${{ inputs.target_profile }}" ]; then
+          ../profiles/${{ inputs.target_profile }}.sh
+        fi
         ./scripts/feeds update -a
         ./scripts/feeds install -a
 
     - name: 配置 OpenWrt（自动选择）
       run: |
         cd openwrt
-        if [ -n "${{ inputs.target_profile }}" ]; then
-          ../profiles/${{ inputs.target_profile }}.sh
-        fi
         # 如果有指定的配置文件
         if [ -n "${{ inputs.target_profile }}" ] && [ -f "../profiles/${{ inputs.target_profile }}" ]; then
           cp "../profiles/${{ inputs.target_profile }}" .config
