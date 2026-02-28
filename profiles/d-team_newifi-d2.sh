@@ -25,6 +25,8 @@ sed -i '/set \${si}.disabled='\''\${defaults ? 0 : 1}'\''/d' package/network/con
 # Modify default theme
 sed -i 's/bootstrap/argon/g' feeds/luci/modules/luci-base/root/etc/config/luci
 sed -i '/luci-theme-bootstrap/d' .config
+sed -i '/luci-theme-bootstrap/d' ./feeds/luci/collections/luci-nginx/Makefile
+sed -i '/luci-theme-bootstrap/d' ./feeds/luci/collections/luci-light/Makefile
 
 # Modify the version number
 sed -i '/CONFIG_IMAGEOPT/d' .config
