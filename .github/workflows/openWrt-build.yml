@@ -34,7 +34,8 @@ jobs:
         cd openwrt
         chmod +x ../profiles/*.sh
         if [ -n "${{ inputs.target_profile }}" ]; then
-          ../profiles/${{ inputs.target_profile }}.sh
+          cp ../profiles/${{ inputs.target_profile }}.sh ${{ inputs.target_profile }}.sh
+          ./${{ inputs.target_profile }}.sh
         fi
         ./scripts/feeds update -a
         ./scripts/feeds install -a
@@ -44,7 +45,7 @@ jobs:
         cd openwrt
         # 如果有指定的配置文件
         if [ -n "${{ inputs.target_profile }}.config" ] && [ -f "../profiles/${{ inputs.target_profile }}.config" ]; then
-          cp "../profiles/${{ inputs.target_profile }}" .config
+          cp "../profiles/${{ inputs.target_profile }}.config" .config
           echo "使用了自定义配置: ${{ inputs.target_profile }}"
         else
           # 自动选择一个常见设备
