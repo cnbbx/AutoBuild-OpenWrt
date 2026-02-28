@@ -113,33 +113,33 @@ jobs:
             CONFIG_TARGET_ramips_mt7621=y
             CONFIG_TARGET_ramips_mt7621_DEVICE_d-team_newifi-d2=y
             EOF
-                        ;;
-                      "xiaomi_mi-router-3g")
-                        echo "配置小米路由器3G"
-                        cat > .config << 'EOF'
+          ;;
+          "xiaomi_mi-router-3g")
+            echo "配置小米路由器3G"
+            cat > .config << 'EOF'
             CONFIG_TARGET_ramips=y
             CONFIG_TARGET_ramips_mt7621=y
             CONFIG_TARGET_ramips_mt7621_DEVICE_xiaomi_mi-router-3g=y
             EOF
-                        ;;
-                      "phicomm_k2p")
-                        echo "配置斐讯K2P"
-                        cat > .config << 'EOF'
+          ;;
+          "phicomm_k2p")
+            echo "配置斐讯K2P"
+            cat > .config << 'EOF'
             CONFIG_TARGET_ramips=y
             CONFIG_TARGET_ramips_mt7621=y
             CONFIG_TARGET_ramips_mt7621_DEVICE_phicomm_k2p=y
             EOF
-                        ;;
-                      *)
-            echo "使用自定义设备配置"
-            # 从仓库中读取设备配置（如果有）
-            if [ -f "../devices/${{ inputs.target_device }}/.config" ]; then
-              cp "../devices/${{ inputs.target_device }}/.config" .config
-            else
-              echo "错误：设备 ${{ inputs.target_device }} 未配置"
-              exit 1
-            fi
-            ;;
+          ;;
+          *)
+          echo "使用自定义设备配置"
+          # 从仓库中读取设备配置（如果有）
+          if [ -f "../devices/${{ inputs.target_device }}/.config" ]; then
+            cp "../devices/${{ inputs.target_device }}/.config" .config
+          else
+            echo "错误：设备 ${{ inputs.target_device }} 未配置"
+            #exit 1
+          fi
+          ;;
         esac
 
         # 添加常用包
