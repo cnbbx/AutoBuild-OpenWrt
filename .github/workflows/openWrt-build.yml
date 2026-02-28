@@ -37,7 +37,7 @@ jobs:
         ./scripts/feeds update -a
         ./scripts/feeds install -a
 
-    - name: 配置 OpenWrt（自动选择）
+    - name: 配置 OpenWrt
       run: |
         cd openwrt
         # 如果有指定的配置文件
