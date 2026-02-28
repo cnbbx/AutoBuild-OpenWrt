@@ -43,7 +43,7 @@ jobs:
       run: |
         cd openwrt
         # 如果有指定的配置文件
-        if [ -n "${{ inputs.target_profile }}" ] && [ -f "../profiles/${{ inputs.target_profile }}" ]; then
+        if [ -n "${{ inputs.target_profile }}.config" ] && [ -f "../profiles/${{ inputs.target_profile }}.config" ]; then
           cp "../profiles/${{ inputs.target_profile }}" .config
           echo "使用了自定义配置: ${{ inputs.target_profile }}"
         else
