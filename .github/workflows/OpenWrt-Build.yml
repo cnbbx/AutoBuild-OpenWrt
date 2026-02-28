@@ -31,7 +31,6 @@ on:
         type: choice
         options:
           - 'defconfig'
-          - 'interactive'
 
 env:
   OPENWRT_REPO: "https://github.com/cnbbx/Openwrt-src.git"
@@ -75,33 +74,6 @@ jobs:
         cd openwrt
         ./scripts/feeds update -a
         ./scripts/feeds install -a
-    
-    # 重要：手动配置步骤
-    - name: 🧠 手动配置固件（交互模式）
-      if: ${{ inputs.build_type == 'interactive' }}
-      run: |
-        cd openwrt
-        echo "⚠️  正在启动 menuconfig 配置界面..."
-        echo "请确保已连接到终端（如果是远程调试）"
-        echo ""
-        echo "1. 选择 Target System: MediaTek Ralink MIPS"
-        echo "2. 选择 Subtarget: MT7621 based boards"
-        echo "3. 选择 Target Profile: ${{ inputs.target_device }}"
-        echo "4. 按需添加包后保存配置"
-        echo ""
-        echo "配置完成后按 Ctrl+C 继续构建"
-        echo ""
-        
-        # 设置默认配置后启动 menuconfig
-        make defconfig
-        # 会等待用户退出才继续
-        make menuconfig
-        
-        echo "✅ menuconfig 配置完成"
-        
-        # 保存生成的配置
-        cp .config ../openwrt.config.bak
-        echo "配置已备份到 openwrt.config.bak"
         
     - name: 🔧 自动配置固件（默认模式）
       if: ${{ inputs.build_type == 'defconfig' }}
@@ -149,6 +121,13 @@ jobs:
         grep -E "CONFIG_TARGET|CONFIG_PACKAGE|CONFIG_LUCI" .config | head -30
         echo ""
     
+    - name: 🚨 启动远程调试会话
+      if: ${{ inputs.enable_debug == 'true' }}
+      uses: mxschmitt/action-tmate@v3
+      with:
+        limit-access-to-actor: false
+        disable-log: false
+        
     - name: 📋 显示配置文件摘要
       run: |
         cd openwrt
@@ -160,13 +139,6 @@ jobs:
         echo ""
         echo "=== 目标设备配置 ==="
         grep "DEVICE_${{ inputs.target_device }}" .config || true
-
-    - name: 🚨 启动远程调试会话
-      if: ${{ inputs.enable_debug == 'true' }}
-      uses: mxschmitt/action-tmate@v3
-      with:
-        limit-access-to-actor: false
-        disable-log: false
         
   build-firmware:
     runs-on: ubuntu-latest
