@@ -22,7 +22,7 @@ on:
       target_device:
         description: '目标设备'
         required: true
-        default: 'xiaomi_mi-router-4a-gigabit-v2'
+        default: 'd-team_newifi-d2'
         type: string
       build_type:
         description: '构建类型'
@@ -35,7 +35,7 @@ on:
 
 env:
   OPENWRT_REPO: "https://github.com/cnbbx/Openwrt-src.git"
-  OPENWRT_BRANCH: "openwrt-23.05"
+  OPENWRT_BRANCH: "openwrt-25.12"
 
 jobs:
   setup-build:
@@ -52,13 +52,6 @@ jobs:
         echo "清理构建: ${{ inputs.clean_build }}"
         echo "目标设备: ${{ inputs.target_device }}"
         echo "构建类型: ${{ inputs.build_type }}"
-    
-    - name: 🚨 启动远程调试会话
-      if: ${{ inputs.enable_debug == 'true' }}
-      uses: mxschmitt/action-tmate@v3
-      with:
-        limit-access-to-actor: false
-        disable-log: false
 
   config-firmware:
     runs-on: ubuntu-latest
@@ -109,7 +102,7 @@ jobs:
         # 保存生成的配置
         cp .config ../openwrt.config.bak
         echo "配置已备份到 openwrt.config.bak"
-    
+        
     - name: 🔧 自动配置固件（默认模式）
       if: ${{ inputs.build_type == 'defconfig' }}
       run: |
@@ -168,6 +161,13 @@ jobs:
         echo "=== 目标设备配置 ==="
         grep "DEVICE_${{ inputs.target_device }}" .config || true
 
+    - name: 🚨 启动远程调试会话
+      if: ${{ inputs.enable_debug == 'true' }}
+      uses: mxschmitt/action-tmate@v3
+      with:
+        limit-access-to-actor: false
+        disable-log: false
+        
   build-firmware:
     runs-on: ubuntu-latest
     needs: config-firmware
