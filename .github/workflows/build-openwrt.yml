@@ -79,7 +79,7 @@ jobs:
           echo "硬盘详情："
           df -Th
 
-      - name: 初始化系统环境
+      - name: 打包前环境初始化（精简版）
         if: matrix.FIRMWARE_BUILD == true
         env:
           DEBIAN_FRONTEND: noninteractive
@@ -90,19 +90,17 @@ jobs:
           # 启用 i386 多架构支持
           sudo dpkg --add-architecture i386
       
-          # 启用 universe 源（Python 2, gcc-multilib 等依赖在此）
+          # 启用 universe 源（Python 2 依赖）
           sudo add-apt-repository -y universe
       
-          # 强制更新 APT 缓存（关键！）
+          # 强制更新源列表（关键！）
           sudo apt-get -qq update
       
-          # 临时禁用安全检查（如遇到 GPG 错误）
+          # 额外添加 security 源（防止缺失关键包）
           echo "deb http://security.ubuntu.com/ubuntu jammy-security main" | sudo tee /etc/apt/sources.list.d/security.list
-      
-          # 再次更新（确保包含 security 源）
           sudo apt-get -qq update
       
-          # 安装核心构建依赖（兼容 Ubuntu 22.04）
+          # 安装编译必备核心工具（兼容 Ubuntu 22.04）
           sudo apt-get -qq install --no-install-recommends \
               build-essential \
               libfuse-dev \
@@ -116,42 +114,32 @@ jobs:
               libz-dev \
               patch \
               python3 \
-              python2 \
               unzip \
               zlib1g-dev \
               lib32gcc-s1 \
               libc6-dev-i386 \
-              subversion \
               flex \
-              gcc-multilib \
               p7zip-full \
-              msmtp \
               libssl-dev \
               texinfo \
-              libglib2.0-dev \
-              xmlto \
-              qemu-utils \
-              upx \
               libelf-dev \
               autoconf \
               automake \
               libtool \
-              autopoint \
-              device-tree-compiler \
-              g++-multilib \
-              antlr3 \
-              gperf \
               wget \
               curl \
               swig \
               rsync
       
-          # 安装 Node.js + uglify-js（替代原 uglifyjs 包）
+          # 补充：手动安装 device-tree-compiler（如果需要）
+          sudo apt-get -qq install --no-install-recommends dtc
+      
+          # 安装 Node.js + uglify-js（必须）
           curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash -
           sudo apt-get install -y nodejs
           sudo npm install -g uglify-js
       
-          # 清理无效包和缓存
+          # 清理
           sudo apt-get -qq autoremove --purge
           sudo apt-get -qq clean
       
