@@ -45,6 +45,7 @@ jobs:
           cp "../profiles/${{ inputs.target_profile }}.config" .config
           echo "使用了自定义配置: ${{ inputs.target_profile }}.config"
         fi
+        make defconfig
         chmod +x ../profiles/*.sh
         if [ -n "${{ inputs.target_profile }}" ]; then
           echo "初始化配置: ${{ inputs.target_profile }}.sh"
@@ -60,7 +61,7 @@ jobs:
           make download -j$(nproc) && break || sleep 10
         done
         # 编译
-        make -j$(($(nproc)+1)) || make -j$(nproc) || make -j1
+        make -j$(($(nproc)+1)) || make -j$(nproc) || make -j1 V=s
 
     - name: 收集结果
       run: |
