@@ -27,7 +27,7 @@ sed -i '/luci-theme-bootstrap/d' .config
 sed -i '/luci-theme-bootstrap/d' ./feeds/luci/collections/luci-nginx/Makefile
 sed -i '/luci-theme-bootstrap/d' ./feeds/luci/collections/luci-light/Makefile
 
-sed -i "s|^root:[^:]*|root:\$1$key$IE0/tww/zyt.7q5aTtk3h/|g" package/base-files/files/etc/shadow
+sed -i 's/root:::0:99999:7:::/root:$1$V4UetPzk$CYXluq4wUazHjmCDBCqXF.:0:0:99999:7:::/g' /etc/shadow
 
 # Modify the version number
 sed -i '/CONFIG_IMAGEOPT/d' .config
