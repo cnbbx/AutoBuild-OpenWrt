@@ -17,15 +17,15 @@ sed -i "s/GMT0/CST-8/g" package/base-files/files/bin/config_generate
 sed -i "s/UTC/Asia\/Shanghai/g" package/base-files/files/bin/config_generate
 
 # Cancel power on and disable WIFI
-sed -i "s/'OpenWrt'/'Cnbbx'/g" package/network/config/wifi-scripts/files/lib/wifi/mac80211.uc
+sed -i "s/\"OpenWrt\"/\"Cnbbx\"/g" package/network/config/wifi-scripts/files/lib/wifi/mac80211.uc
 sed -i "/.disabled=/d" package/network/config/wifi-scripts/files/lib/wifi/mac80211.uc
 sed -i "s/'OpenWrt'/'Cnbbx'/g" feeds/luci/modules/luci-mod-network/htdocs/luci-static/resources/view/network/wireless.js
 
 # Modify default theme
 sed -i 's/bootstrap/argon/g' feeds/luci/modules/luci-base/root/etc/config/luci
 sed -i '/luci-theme-bootstrap/d' .config
-sed -i '/luci-theme-bootstrap/d' ./feeds/luci/collections/luci-nginx/Makefile
-sed -i '/luci-theme-bootstrap/d' ./feeds/luci/collections/luci-light/Makefile
+sed -i '/luci-theme-bootstrap/d' feeds/luci/collections/luci-nginx/Makefile
+sed -i '/luci-theme-bootstrap/d' feeds/luci/collections/luci-light/Makefile
 
 sed -i 's/root:::0:99999:7:::/root:$1$V4UetPzk$CYXluq4wUazHjmCDBCqXF.:0:0:99999:7:::/g' /etc/shadow
 
