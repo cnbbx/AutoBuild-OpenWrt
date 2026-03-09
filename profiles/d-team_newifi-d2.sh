@@ -51,11 +51,7 @@ echo 'CONFIG_VERSION_PRODUCT="CnbbxOS"' >> .config
 echo 'CONFIG_VERSION_HWREV="ROS25.12"' >> .config
 
 # Add kernel build user
-[ -z $(grep "CONFIG_KERNEL_BUILD_USER=" .config) ] &&
-    echo 'CONFIG_KERNEL_BUILD_USER="Cnbbx"' >>.config ||
-    sed -i 's@\(CONFIG_KERNEL_BUILD_USER=\).*@\1"Cnbbx"@' .config
-	
-# Add kernel build domain
-[ -z $(grep "CONFIG_KERNEL_BUILD_DOMAIN=" .config) ] &&
-    echo 'CONFIG_KERNEL_BUILD_DOMAIN="GitHub Actions"' >>.config ||
-    sed -i 's@\(CONFIG_KERNEL_BUILD_DOMAIN=\).*@\1"GitHub Actions"@' .config
+sed -i '/^CONFIG_KERNEL_BUILD_USER=/c\CONFIG_KERNEL_BUILD_USER="Cnbbx"'
+
+# Add kernel build domain .config
+sed -i '/^CONFIG_KERNEL_BUILD_DOMAIN=/c\CONFIG_KERNEL_BUILD_DOMAIN="GitHub Actions"' .config
