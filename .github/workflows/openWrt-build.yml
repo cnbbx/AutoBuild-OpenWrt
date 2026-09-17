@@ -86,7 +86,6 @@ jobs:
 
     - name: 移除老的 Releases
       uses: dev-drprasad/delete-older-releases@master
-      if: !cancelled()
       with:
         keep_latest: 3
         delete_tags: true
