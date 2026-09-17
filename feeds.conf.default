@@ -1,6 +1,0 @@
-src-git-full packages https://github.com/cnbbx/Openwrt-packages.git
-src-git-full luci https://github.com/cnbbx/Openwrt-luci.git
-src-git-full routing https://github.com/cnbbx/Openwrt-routing.git
-src-git luciApp https://github.com/cnbbx/Openwrt-LuciApp.git
-src-git small https://github.com/kenzok8/small.git
-src-git kenzo https://github.com/kenzok8/openwrt-packages.git
