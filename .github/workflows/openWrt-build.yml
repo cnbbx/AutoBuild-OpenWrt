@@ -10,6 +10,9 @@ on:
         required: false
         default: 'd-team_newifi-d2'
         type: string
+permissions:
+  actions: write
+  contents: read
 jobs:
   build:
     runs-on: ubuntu-latest
